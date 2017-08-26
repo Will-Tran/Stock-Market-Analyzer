@@ -1,0 +1,523 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
+using System.Net;
+using System.Xml;
+using Newtonsoft.Json.Linq;
+using System.IO;
+using OxyPlot;
+using OxyPlot.Series;
+using System.Windows.Forms.DataVisualization.Charting;
+namespace Project
+{
+public partial class PriceFinder : Form
+{
+string[] countries = new string[] { "Canada", "United States", "Japan", "China", "United Kingdom", "Hong Kong", "Germany",
+"India", "Switzerland", "South Korea", "Australia", "South Africa", "Taiwan", "Denmark",
+"Finland", "France", "Iceland", "Netherlands", "Italy", "Poland", "Russia", "Sweden",
+"Belgium", "Indonesia", "Malaysia", "Singapore", "Thailand", "New Zealand", "Portugal" };
+string[] exchanges0 = new string[] { "Toronto Stock Exchange", "TSX Venture Exchange", "Canadian Securities Exchange" };
+string[] exchanges1 = new string[] { "NASDAQ", "New York Stock Exchange" };
+string[] exchanges2 = new string[] { "Tokyo Stock Exchange" };
+string[] exchanges3 = new string[] { "Shanghai Stock Exchange", "Shenzhen Stock Exchange" };
+string[] exchanges4 = new string[] { "London Stock Exchange" };
+string[] exchanges5 = new string[] { "Hong Kong Stock Exchange" };
+string[] exchanges6 = new string[] { "Frankfurt Stock Exchange"};
+string[] exchanges7 = new string[] { "Bombay Stock Exchange", "National Stock Exchange of India" };
+string[] exchanges8 = new string[] { "SIX Swiss Exchange" };
+string[] exchanges9 = new string[] { "Korea Stock Exchange", "KOSDAQ" };
+string[] exchanges10 = new string[] { "Australian Securities Exchange" };
+string[] exchanges11 = new string[] { "Johannesburg Stock Exchange" };
+string[] exchanges12 = new string[] { "Taiwan Stock Exchange" };
+string[] exchanges13 = new string[] { "NASDAQ OMX Copenhagen" };
+string[] exchanges14 = new string[] { "NASDAQ OMX Helsinki"};
+string[] exchanges15 = new string[] { "Euronext Paris" };
+string[] exchanges16 = new string[] { "NASDAQ OMX Iceland" };
+string[] exchanges17 = new string[] { "Euronext Amsterdam" };
+string[] exchanges18 = new string[] { "Milan Stock Exchange" };
+string[] exchanges19 = new string[] { "Warsaw Stock Exchange" };
+string[] exchanges20 = new string[] { "Moscow Exchange" };
+string[] exchanges21 = new string[] { "NASDAQ OMX Stockholm" };
+string[] exchanges22 = new string[] { "Euronext Brussels" };
+string[] exchanges23 = new string[] { "Indonesia Stock Exchange"};
+string[] exchanges24 = new string[] { "Bursa Malaysia" };
+string[] exchanges25 = new string[] { "Singapore Exchange" };
+string[] exchanges26 = new string[] { "Thailand Stock Exchange" };
+string[] exchanges27 = new string[] { "New Zealand Stock Exchange" };
+string[] exchanges28 = new string[] { "Euronext Lisbon" };
+public PriceFinder()
+{
+InitializeComponent();
+Country.SelectedIndexChanged += Country_SelectedIndexChanged;
+Country.Items.AddRange(countries);
+Country.Sorted = true;
+Country.SelectedIndex = 2;
+Exchange.SelectedIndex = 1;
+Price.Click += new EventHandler(this.Price_Click);
+StartDate.Format = DateTimePickerFormat.Custom;
+StartDate.CustomFormat = "MM/dd/yyyy";
+StartDate.Value = new DateTime(2010, 01, 01);
+EndDate.Value = DateTime.Today.AddDays(-1);
+EndDate.Format = DateTimePickerFormat.Custom;
+EndDate.CustomFormat = "MM/dd/yyyy";
+}
+private void Country_SelectedIndexChanged(object sender, EventArgs e)
+{
+string countryselection = Country.SelectedItem as string;
+switch (countryselection)
+{
+case "Canada":
+Exchange.Items.Clear();
+Exchange.Items.AddRange(exchanges0);
+Exchange.Sorted = true;
+Exchange.SelectedIndex = 1;
+break;
+case "United States":
+Exchange.Items.Clear();
+Exchange.Items.AddRange(exchanges1);
+Exchange.Sorted = true;
+Exchange.SelectedIndex = 1;
+break;
+case "Japan":
+Exchange.Items.Clear();
+Exchange.Items.AddRange(exchanges2);
+Exchange.Sorted = true;
+Exchange.SelectedIndex = 0;
+break;
+case "China":
+Exchange.Items.Clear();
+Exchange.Items.AddRange(exchanges3);
+Exchange.Sorted = true;
+Exchange.SelectedIndex = 0;
+break;
+case "United Kingdom":
+Exchange.Items.Clear();
+Exchange.Items.AddRange(exchanges4);
+Exchange.Sorted = true;
+Exchange.SelectedIndex = 0;
+break;
+case "Hong Kong":
+Exchange.Items.Clear();
+Exchange.Items.AddRange(exchanges5);
+Exchange.Sorted = true;
+Exchange.SelectedIndex = 0;
+break;
+case "Germany":
+Exchange.Items.Clear();
+Exchange.Items.AddRange(exchanges6);
+Exchange.Sorted = true;
+Exchange.SelectedIndex = 0;
+break;
+case "India":
+Exchange.Items.Clear();
+Exchange.Items.AddRange(exchanges7);
+Exchange.Sorted = true;
+Exchange.SelectedIndex = 1;
+break;
+case "Switzerland":
+Exchange.Items.Clear();
+Exchange.Items.AddRange(exchanges8);
+Exchange.Sorted = true;
+Exchange.SelectedIndex = 0;
+break;
+case "South Korea":
+Exchange.Items.Clear();
+Exchange.Items.AddRange(exchanges9);
+Exchange.Sorted = true;
+Exchange.SelectedIndex = 0;
+break;
+case "Australia":
+Exchange.Items.Clear();
+Exchange.Items.AddRange(exchanges10);
+Exchange.Sorted = true;
+Exchange.SelectedIndex = 0;
+break;
+case "South Africa":
+Exchange.Items.Clear();
+Exchange.Items.AddRange(exchanges11);
+Exchange.Sorted = true;
+Exchange.SelectedIndex = 0;
+break;
+case "Taiwan":
+Exchange.Items.Clear();
+Exchange.Items.AddRange(exchanges12);
+Exchange.Sorted = true;
+Exchange.SelectedIndex = 0;
+break;
+case "Denmark":
+Exchange.Items.Clear();
+Exchange.Items.AddRange(exchanges13);
+Exchange.Sorted = true;
+Exchange.SelectedIndex = 0;
+break;
+case "Finland":
+Exchange.Items.Clear();
+Exchange.Items.AddRange(exchanges14);
+Exchange.Sorted = true;
+Exchange.SelectedIndex = 0;
+break;
+case "France":
+Exchange.Items.Clear();
+Exchange.Items.AddRange(exchanges15);
+Exchange.Sorted = true;
+Exchange.SelectedIndex = 0;
+break;
+case "Iceland":
+Exchange.Items.Clear();
+Exchange.Items.AddRange(exchanges16);
+Exchange.Sorted = true;
+Exchange.SelectedIndex = 0;
+break;
+case "Netherlands":
+Exchange.Items.Clear();
+Exchange.Items.AddRange(exchanges17);
+Exchange.Sorted = true;
+Exchange.SelectedIndex = 0;
+break;
+case "Italy":
+Exchange.Items.Clear();
+Exchange.Items.AddRange(exchanges18);
+Exchange.Sorted = true;
+Exchange.SelectedIndex = 0;
+break;
+case "Poland":
+Exchange.Items.Clear();
+Exchange.Items.AddRange(exchanges19);
+Exchange.Sorted = true;
+Exchange.SelectedIndex = 0;
+break;
+case "Russia":
+Exchange.Items.Clear();
+Exchange.Items.AddRange(exchanges20);
+Exchange.Sorted = true;
+Exchange.SelectedIndex = 0;
+break;
+case "Sweden":
+Exchange.Items.Clear();
+Exchange.Items.AddRange(exchanges21);
+Exchange.Sorted = true;
+Exchange.SelectedIndex = 0;
+break;
+case "Belgium":
+Exchange.Items.Clear();
+Exchange.Items.AddRange(exchanges22);
+Exchange.Sorted = true;
+Exchange.SelectedIndex = 0;
+break;
+case "Indonesia":
+Exchange.Items.Clear();
+Exchange.Items.AddRange(exchanges23);
+Exchange.Sorted = true;
+Exchange.SelectedIndex = 0;
+break;
+case "Malaysia":
+Exchange.Items.Clear();
+Exchange.Items.AddRange(exchanges24);
+Exchange.Sorted = true;
+Exchange.SelectedIndex = 0;
+break;
+case "Singapore":
+Exchange.Items.Clear();
+Exchange.Items.AddRange(exchanges25);
+Exchange.Sorted = true;
+Exchange.SelectedIndex = 0;
+break;
+case "Thailand":
+Exchange.Items.Clear();
+Exchange.Items.AddRange(exchanges26);
+Exchange.Sorted = true;
+Exchange.SelectedIndex = 0;
+break;
+case "New Zealand":
+Exchange.Items.Clear();
+Exchange.Items.AddRange(exchanges27);
+Exchange.Sorted = true;
+Exchange.SelectedIndex = 0;
+break;
+case "Portugal":
+Exchange.Items.Clear();
+Exchange.Items.AddRange(exchanges28);
+Exchange.Sorted = true;
+Exchange.SelectedIndex = 0;
+break;
+}
+}
+public string GoogleExchange { get; set; }
+private void Price_Click(object sender, EventArgs e)
+{
+try
+{
+string json;
+switch (Exchange.Text.ToString())
+{
+case "Toronto Stock Exchange":
+GoogleExchange = "TSX";
+break;
+case "TSX Venture Exchange":
+GoogleExchange = "CVE";
+break;
+case "Canadian Securities Exchange":
+GoogleExchange = "CNSX";
+break;
+case "NASDAQ":
+GoogleExchange = "NASDAQ";
+break;
+case "New York Stock Exchange":
+GoogleExchange = "NYSE";
+break;
+case "Tokyo Stock Exchange":
+GoogleExchange = "TYO";
+break;
+case "Shanghai Stock Exchange":
+GoogleExchange = "SHA";
+break;
+case "Shenzhen Stock Exchange":
+GoogleExchange = "SHE";
+break;
+case "London Stock Exchange":
+GoogleExchange = "LON";
+break;
+case "Hong Kong Stock Exchange":
+GoogleExchange = "HKG";
+break;
+case "Frankfurt Stock Exchange":
+GoogleExchange = "FRA";
+break;
+case "Bombay Stock Exchange":
+GoogleExchange = "BOM";
+break;
+case "National Stock Exchange of India":
+GoogleExchange = "NSE";
+break;
+case "SIX Swiss Exchange":
+GoogleExchange = "SWX";
+break;
+case "Korea Stock Exchange":
+GoogleExchange = "KRX";
+break;
+case "KOSDAQ":
+GoogleExchange = "KOSDAQ";
+break;
+case "Australian Securities Exchange":
+GoogleExchange = "ASX";
+break;
+case "Johannesburg Stock Exchange":
+GoogleExchange = "JSE";
+break;
+case "Taiwan Stock Exchange":
+GoogleExchange = "TPE";
+break;
+case "NASDAQ OMX Copenhagen":
+GoogleExchange = "CPH";
+break;
+case "NASDAQ OMX Helsinki":
+GoogleExchange = "HEL";
+break;
+case "Euronext Paris":
+GoogleExchange = "EPA";
+break;
+case "NASDAQ OMX Iceland":
+GoogleExchange = "ICE";
+break;
+case "Euronext Amsterdam":
+GoogleExchange = "AMS";
+break;
+case "Milan Stock Exchange":
+GoogleExchange = "BIT";
+break;
+case "Warsaw Stock Exchange":
+GoogleExchange = "WSE";
+break;
+case "Moscow Exchange":
+GoogleExchange = "MCX";
+break;
+case "NASDAQ OMX Stockholm":
+GoogleExchange = "STO";
+break;
+case "Euronext Brussels":
+GoogleExchange = "EBR";
+break;
+case "Indonesia Stock Exchange":
+GoogleExchange = "IDX";
+break;
+case "Bursa Malaysia":
+GoogleExchange = "KLSE";
+break;
+case "Singapore Exchange":
+GoogleExchange = "SGX";
+break;
+case "Thailand Stock Exchange":
+GoogleExchange = "BKK";
+break;
+case "New Zealand Stock Exchange":
+GoogleExchange = "NZE";
+break;
+case "Euronext Lisbon":
+GoogleExchange = "ELI";
+break;
+}
+using (var web = new WebClient())
+{
+if (Ticker.Text != "")
+{
+var url = "http://finance.google.com/finance/info?client=ig&q=" + GoogleExchange + "%3A" + Ticker.Text;
+json = web.DownloadString(url);
+}
+else if (MultiTickers.Text != "")
+{
+var url = "http://finance.google.com/finance/info?client=ig&q=" + GoogleExchange + "%3A" + MultiTickers.Text;
+json = web.DownloadString(url);
+}
+else
+{
+var url = "http://finance.google.com/finance/info?client=ig&q=" + GoogleExchange + "%3A" + Ticker.Text;
+json = web.DownloadString(url);
+MessageBox.Show("Please enter a valid ticker symbol. Eg. CM, TD, RY, BNS, BMO");
+}
+}
+//Google adds a comment before the json for some unknown reason, so we need to remove it
+json = json.Replace("//", "");
+var v = JArray.Parse(json);
+foreach (var i in v)
+{
+var ticker = i.SelectToken("t");
+var price = (decimal)i.SelectToken("l");
+var ex = i.SelectToken("e");
+var time = i.SelectToken("lt");
+var change = i.SelectToken("c");
+var changep = i.SelectToken("cp");
+var dividend = i.SelectToken("div");
+var divyield = i.SelectToken("yld");
+MessageBox.Show("Ticker: " + "\t" + "\t" + ticker + "\n" + "Price: " + "\t"+ "\t" + price + "\n" + "Exchange: " + "\t" + ex + "\n" + "Time: " + "\t" + "\t" + time + "\n" + "Change: " + "\t" + "\t" + change + "\n" + "Change % : " + "\t" + changep + "%" + "\n" + "Dividend: " + "\t" + dividend + "\n" + "Dividend Yield: " + "\t" + divyield);
+}
+}
+catch
+{
+MessageBox.Show("Please wait 30 seconds before running again to prevent API blocking.\nPlease enter a valid ticker symbol.\nSingle Ticker Example: CM \nMultiple Tickers Example: CM, TD, RY, BNS, BMO");
+}
+}
+private void Reset_Click(object sender, EventArgs e)
+{
+Ticker.Clear();
+MultiTickers.Clear();
+Country.SelectedIndex = 2;
+Exchange.SelectedIndex = 1;
+}
+private void Data_Click(object sender, EventArgs e)
+{
+try
+{
+DateTime StartDateValue = DateTime.Parse(StartDate.Text);
+DateTime EndDateValue = DateTime.Parse(EndDate.Text);
+String StartDateInput = StartDateValue.ToString("MMMM dd, yyyy");
+String EndDateInput = EndDateValue.ToString("MMMM dd, yyyy");
+WebClient client = new WebClient();
+string url = "http://www.google.com/finance/historical?q=" + NASDAQ.Text + "&startdate=" + StartDate + "&enddate=" + EndDate + "&output=csv";
+//string url = "http://www.google.com/finance/historical?q=AAPL&st... 1, 2017&enddate=May 31, 2017&output=csv";
+string StartDateMonth = StartDate.Text.Substring(0, 2);
+string StartDateDay = StartDate.Text.Substring(3, 2);
+string StartDateYear = StartDate.Text.Substring(6, 4);
+string EndDateMonth = EndDate.Text.Substring(0, 2);
+string EndDateDay = EndDate.Text.Substring(3, 2);
+string EndDateYear = EndDate.Text.Substring(6, 4);
+client.DownloadFile(url, @"C:\Users\tranwi\Desktop\Project\Stocks\" + NASDAQ.Text + "_" + StartDateMonth + "-" + StartDateDay + "-" + StartDateYear + "_" + EndDateMonth + "-" + EndDateDay + "-" + EndDateYear + ".csv");
+using (var fs = File.OpenRead(@"C:\Users\tranwi\Desktop\Project\Stocks\" + NASDAQ.Text + "_" + StartDateMonth + "-" + StartDateDay + "-" + StartDateYear + "_" + EndDateMonth + "-" + EndDateDay + "-" + EndDateYear + ".csv"))
+using (var reader = new StreamReader(fs))
+{
+reader.ReadLine();
+List<string> listA = new List<string>();
+List<string> listB = new List<string>();
+List<string> listC = new List<string>();
+List<string> listD = new List<string>();
+List<string> listE = new List<string>();
+List<string> listF = new List<string>();
+while (!reader.EndOfStream)
+{
+var line = reader.ReadLine();
+var values = line.Split(',');
+listA.Add(values[0]);
+listB.Add(values[1]);
+listC.Add(values[2]);
+listD.Add(values[3]);
+listE.Add(values[4]);
+listF.Add(values[5]);
+}
+int totaldate = listA.Count;
+int totalprice = listE.Count;
+}
+//StockData.ChartAreas["Price"].Axes[0].Title = "Date";
+//StockData.ChartAreas["Price"].Axes[1].Title = "Price";
+for (int i = 0; i < totalprice; i++)
+{
+//StockData.Series["Price"].Points.Add(newDataPoint(i, listE(i)));
+}
+StockData.Series["Price"].ChartType = SeriesChartType.FastLine;
+StockData.Series["Price"].Color = Color.Blue;
+}
+catch
+{
+MessageBox.Show("Please enter a valid Ticker and/or Start Date and/or End Date.");
+}
+}
+private double[] newDataPoint(int i, object[] p)
+{
+throw new NotImplementedException();
+}
+private double[] newDataPoint(object[] p, object p_2)
+{
+throw new NotImplementedException();
+}
+private object[] listE(int i)
+{
+throw new NotImplementedException();
+}
+private object listA(int i)
+{
+throw new NotImplementedException();
+}
+private void Reset2_Click(object sender, EventArgs e)
+{
+NASDAQ.Clear();
+StartDate.Value = new DateTime(2010, 01, 01);
+EndDate.Value = DateTime.Today.AddDays(-1);
+}
+private void textBox1_TextChanged(object sender, EventArgs e)
+{
+}
+private void Form1_Load(object sender, EventArgs e)
+{
+}
+private void label1_Click(object sender, EventArgs e)
+{
+}
+private void monthCalendar1_DateChanged(object sender, DateRangeEventArgs e)
+{
+}
+private void dateTimePicker1_ValueChanged(object sender, EventArgs e)
+{
+}
+private void dateTimePicker1_ValueChanged_1(object sender, EventArgs e)
+{
+}
+private void button1_Click(object sender, EventArgs e)
+{
+}
+private void Ticker_TextChanged(object sender, EventArgs e)
+{
+}
+private void label6_Click(object sender, EventArgs e)
+{
+}
+private void StartDate_ValueChanged(object sender, EventArgs e)
+{
+}
+public static object url { get; set; }
+public int total { get; set; }
+public int totalprice { get; set; }
+}
+}
